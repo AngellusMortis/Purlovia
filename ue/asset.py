@@ -290,8 +290,9 @@ class ExportTableItem(UEBase):
         self._newField('properties', PropertyTable(self, weakref.proxy(stream)))
         self.properties.link()
 
+        ctx = get_ctx()
         # Read data that some types have, located after the property table
-        if self.klass.value:
+        if ctx.extended_properties and self.klass.value:
             stream.offset += 4  # skip the remaining bytes of the PropertyTable marker
 
             type_cls = AFTER_PROPERTY_TABLE_TYPES.get(str(self.klass.value.name), None)
