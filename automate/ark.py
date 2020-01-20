@@ -233,7 +233,7 @@ class ArkSteamManager:
         pkg = moddata['package']
         if pkg:
             pgd_asset = loader[moddata['package']]
-            title = pgd_asset.default_export.properties.get_property('ModName').value
+            title = str(pgd_asset.default_export.properties.get_property('ModName', fallback='')) or None
         else:
             title = moddata['id']
         return title
