@@ -79,4 +79,4 @@ for mod in sorted(output_data, key=lambda v: int(v['id'])):
     updated = mod['time_updated']
     if updated < age_cutoff:
         comment += f" (outdated? updated {updated.date()})"
-    print(f"{mod['id']:>10} = {mod['title']:40} # {comment}")
+    print(f"{mod['id']:<10} = {mod['title']:40} # {comment}")
