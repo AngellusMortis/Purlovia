@@ -186,6 +186,7 @@ class ProcessSpawnMapsStage(ProcessingStage):
         if 'onlyEventGlobalSwaps' not in data_map_settings['worldSettings']:
             # Include global swaps as the map allows them
             all_swaps.append(make_random_class_weights_dict(global_swaps))
+        # TODO: Expand the swaps ahead of time
 
         # Determine base output path
         output_path = self._get_svg_output_path(data_path, map_name, modid)
