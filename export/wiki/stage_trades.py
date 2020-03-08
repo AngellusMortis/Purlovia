@@ -16,11 +16,11 @@ logger.addHandler(NullHandler())
 
 
 class TradesStage(JsonHierarchyExportStage):
-    def get_skip(self):
-        return not self.manager.config.export_wiki.ExportTrades
-
     def get_format_version(self) -> str:
         return "1"
+
+    def get_name(self):
+        return 'trades'
 
     def get_field(self) -> str:
         return "trades"

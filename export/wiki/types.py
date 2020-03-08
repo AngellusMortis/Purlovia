@@ -228,21 +228,6 @@ class PrimalEngramEntry(UEProxyStructure, uetype='/Script/ShooterGame.PrimalEngr
     EngramGroup: Mapping[int, ByteProperty]
 
 
-class MissionType(UEProxyStructure, uetype='/Script/ShooterGame.MissionType'):
-    # DevKit Verified
-
-    # DevKit Unverified
-    bDivideHexogonsOnCompletion = uebools(False)  # sic
-    bAutoRewardFromCustomItemSets = uebools(False)
-    bRollExtraLootSetsPerPlayer = uebools(False)
-    HexagonsOnCompletion = ueints(0)
-    MissionSuccessMessage = uestrings('')
-    MissionDisplayName = uestrings('')
-    MissionDescription = uestrings('')
-
-    CustomItemSets: Mapping[int, ArrayProperty]
-
-
 class HexagonTradableOption(UEProxyStructure, uetype='/Script/ShooterGame.HexagonTradableOption'):
     # DevKit Verified
 
@@ -256,3 +241,70 @@ class HexagonTradableOption(UEProxyStructure, uetype='/Script/ShooterGame.Hexago
 class DayCycleManager_Gen1(UEProxyStructure, uetype='/Script/ShooterGame.DayCycleManager'):
     # No properties we can assume type for.
     GenesisTradableOptions: Mapping[int, ArrayProperty]
+
+
+class MissionType(UEProxyStructure, uetype='/Script/ShooterGame.MissionType'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    bDivideHexogonsOnCompletion = uebools(False)  # sic
+    bAutoRewardFromCustomItemSets = uebools(False)
+    bRollExtraLootSetsPerPlayer = uebools(False)
+    bRepeatableMission = uebools(False)
+    HexagonsOnCompletion = ueints(0)
+    MissionSuccessMessage = uestrings('')
+    MissionDisplayName = uestrings('')
+    MissionDescription = uestrings('')
+    MissionMaxDurationSeconds = uefloats(0)
+    GlobalMissionCooldown = uefloats(60.0)
+    MaxPlayerCount = ueints(0)
+
+    bAutoRewardXPOnMissionComplete = uebools(False)
+    TargetPlayerLevel = ueints(0)
+    MinItemSets = uefloats(1.0)
+    MaxItemSets = uefloats(1.0)
+
+    CustomItemSets: Mapping[int, ArrayProperty]
+    MissionCustomData: Mapping[int, ObjectProperty]
+
+
+class MissionType_Retrieve(MissionType,
+                           uetype='/Game/Genesis/Missions/Retrieve/MissionType_Retrieve_Base.MissionType_Retrieve_Base_C'):
+    # DevKit Verified
+    MissionWeaponQuality = uefloats(10.0)
+    NumberOfItems = ueints(2)
+    ChanceToSpawnDino = uefloats(0.75)
+
+    # DevKit Unverified
+
+    RetrieveItemClass: Mapping[int, ObjectProperty]
+    DinosToSpawn: Mapping[int, ArrayProperty]
+    DinosToSpawnWeights: Mapping[int, ArrayProperty]
+    DinosToSpawnForStructures: Mapping[int, ArrayProperty]
+
+
+class MissionType_Escort(MissionType, uetype='/Game/Genesis/Missions/Escort/MissionType_Escort_Base.MissionType_Escort_Base_C'):
+    # DevKit Verified
+    EscortDinoBaseWalkSpeed = uefloats(20.0)
+    EscortDinoEscortedSpeed = uefloats(110.0)
+
+    # DevKit Unverified
+
+    RetrieveItemClass: Mapping[int, ObjectProperty]
+    EscortDinoToSpawn: Mapping[int, ArrayProperty]
+    AttackingDinoSetup: Mapping[int, ArrayProperty]
+    AttackingDinoSpawnWeight: Mapping[int, ArrayProperty]
+
+
+class MissionType_Hunt(MissionType, uetype='/Game/Genesis/Missions/Hunt/MissionType_Hunt.MissionType_Hunt_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_Race(MissionType, uetype='/Game/Genesis/Missions/Race/MissionType_Race.MissionType_Race_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...

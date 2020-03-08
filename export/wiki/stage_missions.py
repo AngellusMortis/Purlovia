@@ -3,7 +3,7 @@ from pathlib import PurePosixPath
 from typing import *
 
 from automate.hierarchy_exporter import JsonHierarchyExportStage
-from export.wiki.types import MissionType
+from export.wiki.types import *
 from ue.asset import UAsset
 from ue.proxy import UEProxyStructure
 
@@ -18,11 +18,11 @@ logger.addHandler(NullHandler())
 
 
 class MissionsStage(JsonHierarchyExportStage):
-    def get_skip(self):
-        return not self.manager.config.export_wiki.ExportMissions
-
     def get_format_version(self) -> str:
         return "1"
+
+    def get_name(self):
+        return 'missions'
 
     def get_field(self) -> str:
         return "missions"
@@ -38,11 +38,47 @@ class MissionsStage(JsonHierarchyExportStage):
 
         v: Dict[str, Any] = dict()
         v['bp'] = proxy.get_source().fullname
+        v['type'] = 'base'
         v['name'] = mission.MissionDisplayName[0]
         v['description'] = mission.MissionDescription[0]
-        v['rewards'] = dict(hexagons=_convert_hexagon_values(mission), items=_convert_item_rewards(mission))
+
+        v['targetPlayerLevel'] = mission.TargetPlayerLevel[0]
+        v['maxPlayers'] = mission.MaxPlayerCount[0]
+        v['maxDuration'] = mission.MissionMaxDurationSeconds[0]
+        v['globalCooldown'] = mission.GlobalMissionCooldown[0]
+        v['canBeRepeated'] = mission.bRepeatableMission[0]
+
+        v.update(_get_more_values(mission))
+
+        v['rewards'] = dict(
+            hexagons=_convert_hexagon_values(mission),
+            items=_convert_item_rewards(mission),
+        )
 
         return v
+
+
+def _get_more_values(mission: MissionType):
+    v: Dict[str, Any] = dict()
+
+    if isinstance(mission, MissionType_Retrieve):
+        retrieval = cast(MissionType_Retrieve, mission)
+        v['type'] = 'retrieve'
+
+        v['retrieval'] = dict(item=retrieval.get('RetrieveItemClass', fallback=None))
+    elif isinstance(mission, MissionType_Retrieve):
+        escort = cast(MissionType_Escort, mission)
+        v['type'] = 'escort'
+
+        v['escort'] = dict(
+            targetWalkSpeed=escort.EscortDinoBaseWalkSpeed[0],
+            targetEscortedSpeed=escort.EscortDinoEscortedSpeed[0],
+        )
+    elif isinstance(mission, MissionType_Hunt):
+        _hunt = cast(MissionType_Hunt, mission)
+        v['type'] = 'hunt'
+
+    return v
 
 
 def _convert_item_rewards(mission: MissionType):
@@ -53,7 +89,10 @@ def _convert_item_rewards(mission: MissionType):
         for itemset in d.values:
             v.append(decode_item_set(itemset))
 
-    return v
+    return dict(
+        qtyScale=(mission.MinItemSets[0], mission.MaxItemSets[0]),
+        sets=v,
+    )
 
 
 def _convert_hexagon_values(mission: MissionType) -> Dict[str, Any]:
