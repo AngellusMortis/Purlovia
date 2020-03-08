@@ -308,3 +308,68 @@ class MissionType_Race(MissionType, uetype='/Game/Genesis/Missions/Race/MissionT
 
     # DevKit Unverified
     ...
+
+
+class MissionType_Fishing(MissionType,
+                          uetype='/Game/Genesis/Missions/Fishing/MissionType_Fishing_Base.MissionType_Fishing_Base_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_Gauntlet(
+        MissionType,
+        uetype='/Game/Genesis/Missions/GauntletWaves/MissionType_GauntletWaves_Base.MissionType_GauntletWaves_Base_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_GlitchCounter(
+        MissionType,
+        uetype='/Game/Genesis/Missions/GauntletWaves/MissionType_GlitchCounter_Base.MissionType_GlitchCounter_Base_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_Gather(MissionType,
+                         uetype='/Game/Genesis/Missions/GatherNodes/MissionType_Gather_Nodes.MissionType_Gather_Nodes_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_Sport(MissionType,
+                        uetype='/Game/Genesis/Missions/Sports/DodoBall/MissionType_Sport_Base.MissionType_Sport_Base_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    ...
+
+
+class MissionType_Basketball(
+        MissionType_Sport,
+        uetype='/Game/Genesis/Missions/Sports/DodoBall/MissionType_Sport_BasketBall.MissionType_Sport_BasketBall_C'):
+    # DevKit Verified
+    ScoreLimit = ueints(10)
+    Match_Duration = uefloats(-1.0)
+
+    # DevKit Unverified
+
+    Basketball_Dino: Mapping[int, StructProperty]
+
+
+class MissionDispatcher_MultiUsePylon(
+        MissionType_Sport, uetype='/Game/Genesis/Missions/MissionDispatcher_MultiUsePylon.MissionDispatcher_MultiUsePylon_C'):
+    # DevKit Verified
+
+    # DevKit Unverified
+    MissionTypeIndex = ueints(0)
+
+    MissionTypes: Mapping[int, ArrayProperty]
+    RootComponent: Mapping[int, ObjectProperty]

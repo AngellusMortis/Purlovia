@@ -169,18 +169,11 @@ class Gen1TradeListExport(MapGathererBase):
     @classmethod
     def extract(cls, proxy: UEProxyStructure) -> GatheringResult:
         manager: DayCycleManager_Gen1 = cast(DayCycleManager_Gen1, proxy)
-        d = list()
-
         option_list = manager.get('GenesisTradableOptions', fallback=None)
         if option_list:
             for option in option_list.values:
                 if option:
-                    d.append(option)
-
-        if not d:
-            return None
-
-        return d
+                    yield option
 
     @classmethod
     def before_saving(cls, map_info: MapInfo, data: Dict[str, Any]):
@@ -522,6 +515,46 @@ class RadiationZoneExport(MapGathererBase):
         convert_box_bounds_for_export(map_info, data)
 
 
+class MissionDispatcher(MapGathererBase):
+    MISSION_TYPE_MAP = {
+        0: 'BossFight',
+        1: 'Escort',
+        2: 'Fishing',
+        3: 'GatherNodes',
+        4: 'Gauntlet',
+        5: 'Hunt',
+        6: 'Race',
+        7: 'Retrieve',
+        8: 'Basketball',
+    }
+
+    @classmethod
+    def get_export_name(cls) -> str:
+        return 'dispatchers'
+
+    @classmethod
+    def get_ue_types(cls) -> Set[str]:
+        return {MissionDispatcher_MultiUsePylon.get_ue_type()}
+
+    @classmethod
+    def extract(cls, proxy: UEProxyStructure) -> Iterable[Dict[str, Any]]:
+        dispatcher: MissionDispatcher_MultiUsePylon = cast(MissionDispatcher_MultiUsePylon, proxy)
+
+        type_id = dispatcher.MissionTypeIndex[0].value
+        location = get_actor_location_vector(dispatcher)
+
+        return dict(
+            type=cls.MISSION_TYPE_MAP.get(type_id, type_id),
+            missions=[ref for ref in dispatcher.MissionTypes[0].values],
+            **location.format_for_json(),
+        )
+
+    @classmethod
+    def before_saving(cls, map_info: MapInfo, data: Dict[str, Any]):
+        data['lat'] = map_info.lat.from_units(data['y'])
+        data['long'] = map_info.long.from_units(data['x'])
+
+
 class ExplorerNoteExport(MapGathererBase):
     @classmethod
     def get_export_name(cls) -> str:
@@ -674,6 +707,10 @@ EXPORTS: Dict[str, List[Type[MapGathererBase]]] = {
         # Genesis
         HLNAGlitchExport,
         MagmasaurNests,
+    ],
+    'missions': [
+        # Genesis
+        MissionDispatcher,
     ],
 }
 

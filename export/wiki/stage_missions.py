@@ -63,12 +63,12 @@ def _get_more_values(mission: MissionType):
 
     if isinstance(mission, MissionType_Retrieve):
         retrieval = cast(MissionType_Retrieve, mission)
-        v['type'] = 'retrieve'
+        v['type'] = 'Retrieve'
 
         v['retrieval'] = dict(item=retrieval.get('RetrieveItemClass', fallback=None))
     elif isinstance(mission, MissionType_Retrieve):
         escort = cast(MissionType_Escort, mission)
-        v['type'] = 'escort'
+        v['type'] = 'Escort'
 
         v['escort'] = dict(
             targetWalkSpeed=escort.EscortDinoBaseWalkSpeed[0],
@@ -76,7 +76,25 @@ def _get_more_values(mission: MissionType):
         )
     elif isinstance(mission, MissionType_Hunt):
         _hunt = cast(MissionType_Hunt, mission)
-        v['type'] = 'hunt'
+        v['type'] = 'Hunt'
+    elif isinstance(mission, MissionType_Fishing):
+        _fishing = cast(MissionType_Fishing, mission)
+        v['type'] = 'Fishing'
+    elif isinstance(mission, MissionType_Gauntlet):
+        _gauntlet = cast(MissionType_Gauntlet, mission)
+        v['type'] = 'Gauntlet'
+    elif isinstance(mission, MissionType_GlitchCounter):
+        _counter = cast(MissionType_GlitchCounter, mission)
+        v['type'] = 'GlitchCounter'
+    elif isinstance(mission, MissionType_Gather):
+        _gather = cast(MissionType_Gather, mission)
+        v['type'] = 'Gather'
+    elif isinstance(mission, MissionType_Sport):
+        _sport = cast(MissionType_Sport, mission)
+        v['type'] = 'SportGeneric'
+        if isinstance(mission, MissionType_Basketball):
+            _basketball = cast(MissionType_Basketball, _sport)
+            v['type'] = 'SportBasketball'
 
     return v
 
@@ -100,6 +118,6 @@ def _convert_hexagon_values(mission: MissionType) -> Dict[str, Any]:
 
     v['totalQty'] = mission.HexagonsOnCompletion[0]
     if mission.bDivideHexogonsOnCompletion[0]:
-        v['divideByPlayers'] = True
+        v['split'] = True
 
     return v
