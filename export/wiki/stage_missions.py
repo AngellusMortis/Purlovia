@@ -38,7 +38,7 @@ class MissionsStage(JsonHierarchyExportStage):
 
         v: Dict[str, Any] = dict()
         v['bp'] = proxy.get_source().fullname
-        v['type'] = 'base'
+        v['type'] = 'Base'
         v['name'] = mission.MissionDisplayName[0]
         v['description'] = mission.MissionDescription[0]
 
@@ -48,35 +48,43 @@ class MissionsStage(JsonHierarchyExportStage):
         v['globalCooldown'] = mission.GlobalMissionCooldown[0]
         v['canBeRepeated'] = mission.bRepeatableMission[0]
 
-        v.update(_get_more_values(mission))
+        v['dinos'] = dict()
+        if mission.has_override('MissionWildDinoOutgoingDamageScale') or mission.has_override(
+                'MissionWildDinoIncomingDamageScale'):
+            v['dinos']['incomingScaleW'] = mission.MissionWildDinoIncomingDamageScale[0]
+            v['dinos']['outgoingScaleW'] = mission.MissionWildDinoOutgoingDamageScale[0]
 
         v['rewards'] = dict(
             hexagons=_convert_hexagon_values(mission),
             items=_convert_item_rewards(mission),
         )
 
+        _get_more_values(mission, v)
+
+        if not v['dinos']:
+            del v['dinos']
+
         return v
 
 
-def _get_more_values(mission: MissionType):
-    v: Dict[str, Any] = dict()
-
+def _get_more_values(mission: MissionType, v: Dict[str, Any]):
     if isinstance(mission, MissionType_Retrieve):
         retrieval = cast(MissionType_Retrieve, mission)
         v['type'] = 'Retrieve'
 
         v['retrieval'] = dict(item=retrieval.get('RetrieveItemClass', fallback=None))
-    elif isinstance(mission, MissionType_Retrieve):
+    elif isinstance(mission, MissionType_Escort):
         escort = cast(MissionType_Escort, mission)
         v['type'] = 'Escort'
 
-        v['escort'] = dict(
-            targetWalkSpeed=escort.EscortDinoBaseWalkSpeed[0],
-            targetEscortedSpeed=escort.EscortDinoEscortedSpeed[0],
-        )
+        v['dinos']['walkSpeedTgt'] = escort.EscortDinoBaseWalkSpeed[0]
+        v['dinos']['escortedSpeedTgt'] = escort.EscortDinoEscortedSpeed[0]
     elif isinstance(mission, MissionType_Hunt):
         _hunt = cast(MissionType_Hunt, mission)
         v['type'] = 'Hunt'
+    elif isinstance(mission, MissionType_Race):
+        _race = cast(MissionType_Race, mission)
+        v['type'] = 'Race'
     elif isinstance(mission, MissionType_Fishing):
         _fishing = cast(MissionType_Fishing, mission)
         v['type'] = 'Fishing'
@@ -96,8 +104,6 @@ def _get_more_values(mission: MissionType):
             _basketball = cast(MissionType_Basketball, _sport)
             v['type'] = 'SportBasketball'
 
-    return v
-
 
 def _convert_item_rewards(mission: MissionType):
     d = mission.get('CustomItemSets', fallback=None)
@@ -116,8 +122,15 @@ def _convert_item_rewards(mission: MissionType):
 def _convert_hexagon_values(mission: MissionType) -> Dict[str, Any]:
     v: Dict[str, Any] = dict()
 
-    v['totalQty'] = mission.HexagonsOnCompletion[0]
+    v['qty'] = mission.HexagonsOnCompletion[0]
     if mission.bDivideHexogonsOnCompletion[0]:
         v['split'] = True
+    if mission.has_override('FirstTimeCompletionHexagonRewardBonus'):
+        v['firstTimeBonus'] = mission.FirstTimeCompletionHexagonRewardBonus[0]
+
+    # Type-specific extra data
+    if isinstance(mission, MissionType_Hunt):
+        hunt = cast(MissionType_Hunt, mission)
+        v['lastHitBonus'] = hunt.LastHitAdditionalHexagons[0]
 
     return v

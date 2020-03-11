@@ -4,7 +4,7 @@ from typing import *
 
 from ark.types import PrimalItem
 from automate.hierarchy_exporter import JsonHierarchyExportStage
-from ue.hierarchy import find_parent_classes_iter
+from ue.hierarchy import find_parent_classes
 from ue.properties import ArrayProperty
 from ue.proxy import UEProxyStructure
 
@@ -86,7 +86,7 @@ def _gather_lootitemset_data(asset_ref):
     assert asset.default_export
     d = dict()
 
-    for node in find_parent_classes_iter(asset.default_export):
+    for node in find_parent_classes(asset.default_export):
         if not node.startswith('/Game/'):
             break
 

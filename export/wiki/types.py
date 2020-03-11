@@ -1,5 +1,6 @@
 from typing import Mapping
 
+from ark.types import PrimalItem
 from ue.properties import ArrayProperty, ByteProperty, NameProperty, ObjectProperty, StructProperty
 from ue.proxy import *
 
@@ -264,6 +265,12 @@ class MissionType(UEProxyStructure, uetype='/Script/ShooterGame.MissionType'):
     MinItemSets = uefloats(1.0)
     MaxItemSets = uefloats(1.0)
 
+    FirstTimeCompletionHexagonRewardBonus = ueints(0)
+    GenerateItemSetsQualityMultiplierMin = uefloats(1.0)
+    GenerateItemSetsQualityMultiplierMax = uefloats(1.0)
+    MissionWildDinoOutgoingDamageScale = uefloats(1.0)
+    MissionWildDinoIncomingDamageScale = uefloats(1.0)
+
     CustomItemSets: Mapping[int, ArrayProperty]
     MissionCustomData: Mapping[int, ObjectProperty]
 
@@ -300,7 +307,7 @@ class MissionType_Hunt(MissionType, uetype='/Game/Genesis/Missions/Hunt/MissionT
     # DevKit Verified
 
     # DevKit Unverified
-    ...
+    LastHitAdditionalHexagons = ueints(0)
 
 
 class MissionType_Race(MissionType, uetype='/Game/Genesis/Missions/Race/MissionType_Race.MissionType_Race_C'):
